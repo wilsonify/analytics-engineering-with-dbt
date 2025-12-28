@@ -1,0 +1,12 @@
+version: 2
+
+tests:
+
+  - name: non_negative_values
+    severity: warn
+    description: "Check for non-negative values in specific columns"
+    columns:
+      - column_name: amount
+        assert_non_negative: {}
+      - column_name: quantity
+        assert_non_negative: {}

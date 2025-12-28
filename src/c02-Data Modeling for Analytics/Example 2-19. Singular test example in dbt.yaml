@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: my_model
+    tests:
+      - not_null_columns:
+          columns:
+            - column1
+            - column2
