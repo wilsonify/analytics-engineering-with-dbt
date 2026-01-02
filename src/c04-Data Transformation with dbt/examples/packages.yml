@@ -1,0 +1,13 @@
+# packages.yml - External package dependencies
+
+packages:
+  # From dbt Hub
+  - package: dbt-labs/dbt_utils
+    version: 1.1.1
+  
+  # From Git repository (alternative)
+  # - git: "https://github.com/dbt-labs/dbt-utils.git"
+  #   revision: 1.1.1
+  
+  # From local path (alternative)
+  # - local: /opt/dbt/custom_package

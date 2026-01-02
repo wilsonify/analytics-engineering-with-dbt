@@ -1,0 +1,21 @@
+# profiles.yml - Database connection configuration (for dbt CLI)
+# Note: Not needed for dbt Cloud
+
+dbt_analytics_engineer_book:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      project: [GCP project id]
+      dataset: [the name of your dbt dataset]
+      threads: 4
+      keyfile: [/path/to/bigquery/keyfile.json]
+    
+    prod:
+      type: bigquery
+      method: service-account
+      project: [GCP project id]
+      dataset: dbt_analytics_engineer_prod
+      threads: 4
+      keyfile: [/path/to/bigquery/keyfile.json]
