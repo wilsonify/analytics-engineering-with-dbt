@@ -1,0 +1,26 @@
+# Example 5-23: Metrics Configuration
+# Defines reusable metrics on top of semantic models
+
+metrics:
+  - name: order_total
+    description: Sum of total order amount.
+    type: simple
+    label: Order Total
+    type_params:
+      measure: total_amount
+
+  - name: order_count
+    description: Count of orders.
+    label: Orders
+    type: simple
+    type_params:
+      measure: order_count
+
+  - name: completed_orders
+    description: Count of orders that were completed
+    label: Completed Orders
+    type: simple
+    type_params:
+      measure: order_count
+    filter: |
+      {{ Dimension('order_id__is_order_completed') }} = true

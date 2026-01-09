@@ -1,0 +1,6 @@
+# Example 5-18: dbt_utils Package Configuration
+# Add to your packages.yml file
+
+packages:
+  - package: dbt-labs/dbt_utils
+    version: 1.1.1

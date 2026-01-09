@@ -1,0 +1,41 @@
+# Example 5-22: Semantic Model Configuration
+# Defines entities, dimensions, and measures for the semantic layer
+
+semantic_models:
+  - name: orders
+    description: |
+      Order fact table. This table is at the order grain with one row per order.
+    model: ref('fct_orders')
+    
+    entities:
+      - name: order_id
+        type: primary
+      - name: customer
+        type: foreign
+        expr: customer_id
+    
+    dimensions:
+      - name: order_date
+        type: time
+        type_params:
+          time_granularity: day
+      - name: is_order_completed
+        type: categorical
+    
+    measures:
+      - name: total_amount
+        description: Total amount paid with successful payment status.
+        agg: sum
+      - name: order_count
+        expr: 1
+        agg: sum
+      - name: cash_amount
+        description: Total amount paid in cash.
+        agg: sum
+      - name: credit_amount
+        description: Total amount paid in credit.
+        agg: sum
+      - name: customers_with_orders
+        description: Distinct count of customers placing orders
+        agg: count_distinct
+        expr: customer_id
