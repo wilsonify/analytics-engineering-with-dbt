@@ -1,5 +1,69 @@
 # Chapter 1: Analytics Engineering
 
+## Quick Start
+
+### Prerequisites
+- Docker and Docker Compose installed
+- Make utility
+
+### Initial Setup
+
+1. **Configure environment variables:**
+   ```bash
+   # Copy the example environment file
+   cp .env.example .env
+   
+   # Edit .env to customize settings (optional)
+   # Default values work out of the box
+   ```
+
+2. **Start the environment:**
+   ```bash
+   make setup
+   ```
+
+2. **Run all examples:**
+   ```bash
+   make run
+   ```
+
+3. **Run individual examples:**
+   ```bash
+   make example-sql      # SQL ETL procedure
+   make example-dbt      # dbt transformation
+   make example-airflow  # Airflow DAG info
+   ```
+
+4. **Access services:**
+   - PostgreSQL: `localhost:5432` (configured via `.env`)
+   - Airflow UI: http://localhost:8080 (credentials in `.env`)
+
+5. **Clean up:**
+   ```bash
+   make down   # Stop services
+   make clean  # Remove all data
+   ```
+
+### Configuration
+
+All environment variables are stored in the `.env` file. Key configurations:
+
+- **PostgreSQL**: `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `POSTGRES_PORT`
+- **Airflow**: `_AIRFLOW_WWW_USER_USERNAME`, `_AIRFLOW_WWW_USER_PASSWORD`, `AIRFLOW_PORT`
+- **dbt**: `DBT_PROFILES_DIR`, `DBT_PROJECT_DIR`
+- **Docker Images**: Version control for all services
+
+To customize, edit `.env` before running `make setup`. The `.env.example` file shows all available options.
+
+### What's Included
+
+- **PostgreSQL database** with sample data
+- **dbt environment** for data transformations
+- **Airflow** for workflow orchestration
+- **Working examples** that actually execute
+
+---
+
 ## Table of Contents
 
 - [Introduction](#introduction)
@@ -447,3 +511,154 @@ Integrating dbt with Airflow provides:
 ---
 
 *Next: [Chapter 2 - Data Modeling for Analytics](../c02-Data%20Modeling%20for%20Analytics/readme.md)*
+
+# Analytics Engineering Examples - Quick Reference
+
+## Setup
+
+```bash
+# Start all services
+make setup
+
+# This will:
+# - Start PostgreSQL with sample data
+# - Start dbt container
+# - Start Airflow web server
+```
+
+## Running Examples
+
+### Run Everything
+```bash
+make run
+```
+
+### Individual Examples
+
+**SQL ETL Procedure**
+```bash
+make example-sql
+```
+- Demonstrates Extract, Transform, Load pattern
+- Reads from `source_table`
+- Transforms data (uppercase text, multiply numbers)
+- Loads into `target_table`
+
+**dbt Data Transformation**
+```bash
+make example-dbt
+```
+- Runs dbt model to calculate total revenue
+- Creates `total_revenue` table
+- Shows dbt compilation and execution
+
+**Airflow DAG**
+```bash
+make example-airflow
+```
+- Shows Airflow DAG configuration
+- Visit http://localhost:8080 to see the UI
+- Login: admin / admin
+
+## Database Access
+
+**Connection Details:**
+- Host: localhost
+- Port: 5432
+- Database: analytics_db
+- User: analytics
+- Password: analytics
+
+**Connect with psql:**
+```bash
+docker compose exec postgres psql -U analytics -d analytics_db
+```
+
+**Useful Queries:**
+```sql
+-- View source data
+SELECT * FROM source_table;
+
+-- View transformed data
+SELECT * FROM target_table;
+
+-- View dbt model output
+SELECT * FROM total_revenue;
+
+-- View orders data
+SELECT * FROM orders;
+```
+
+## Services
+
+**Airflow UI:** http://localhost:8080
+- Username: admin
+- Password: admin
+- View DAGs, task execution, logs
+
+**PostgreSQL:** localhost:5432
+- Direct database access
+- Run SQL queries
+- View transformed data
+
+## Cleanup
+
+```bash
+# Stop services (keep data)
+make down
+
+# Stop services and remove all data
+make clean
+```
+
+## Troubleshooting
+
+**Check service status:**
+```bash
+docker compose ps
+```
+
+**View logs:**
+```bash
+# All services
+make logs
+
+# Specific service
+docker compose logs postgres
+docker compose logs dbt
+docker compose logs airflow-standalone
+```
+
+**Restart a service:**
+```bash
+docker compose restart postgres
+docker compose restart dbt
+docker compose restart airflow-standalone
+```
+
+**Full reset:**
+```bash
+make clean
+make setup
+```
+
+## What's Happening
+
+### Example 1-1: SQL ETL
+1. Extracts data from `source_table`
+2. Transforms: uppercase text, doubles numbers
+3. Loads into `target_table`
+4. Classic ETL pattern in SQL
+
+### Example 1-3: dbt Model
+1. dbt compiles the model
+2. Queries `orders` table
+3. Calculates sum of revenue
+4. Creates `total_revenue` table
+5. Modern ELT pattern - transform after load
+
+### Example 1-2: Airflow
+1. DAG defines workflow
+2. Two tasks: print_date → sleep
+3. Shows dependency management
+4. Orchestrates data pipelines
