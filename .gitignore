@@ -1,1 +1,27 @@
+.env
 *.pdf
+*.log
+logs/
+
+# Ignore .env file with credentials
+.env
+
+# Docker volumes
+postgres_data/
+airflow_logs/
+
+# dbt artifacts
+target/
+dbt_packages/
+logs/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# OS
+.DS_Store
+Thumbs.db
