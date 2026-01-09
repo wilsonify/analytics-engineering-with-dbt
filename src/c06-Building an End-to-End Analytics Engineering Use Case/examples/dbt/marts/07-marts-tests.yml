@@ -1,0 +1,64 @@
+# Example 6-24: Generic Tests Configuration
+# _omnichannel_marts.yml - Basic version with tests only
+
+version: 2
+
+models:
+  - name: dim_customers
+    columns:
+      - name: sk_customer
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_channels
+    columns:
+      - name: sk_channel
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_date
+    columns:
+      - name: date_day
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_products
+    columns:
+      - name: sk_product
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_purchase_history
+    columns:
+      - name: sk_customer
+        tests:
+          - relationships:
+              to: ref('dim_customers')
+              field: sk_customer
+      - name: sk_channel
+        tests:
+          - relationships:
+              to: ref('dim_channels')
+              field: sk_channel
+      - name: sk_product
+        tests:
+          - relationships:
+              to: ref('dim_products')
+              field: sk_product
+
+  - name: fct_visit_history
+    columns:
+      - name: sk_customer
+        tests:
+          - relationships:
+              to: ref('dim_customers')
+              field: sk_customer
+      - name: sk_channel
+        tests:
+          - relationships:
+              to: ref('dim_channels')
+              field: sk_channel

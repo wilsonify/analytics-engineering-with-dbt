@@ -1,0 +1,15 @@
+# Example 6-10: Source Configuration
+# _omnichannel_raw_sources.yml
+
+version: 2
+
+sources:
+  - name: omnichannel
+    database: analytics-engineering-book
+    schema: omnichannel_raw
+    tables:
+      - name: Channels
+      - name: Customers
+      - name: Products
+      - name: VisitHistory
+      - name: PurchaseHistory

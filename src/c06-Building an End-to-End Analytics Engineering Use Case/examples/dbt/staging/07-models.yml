@@ -1,0 +1,11 @@
+# Example 6-16: Staging Models Configuration
+# _omnichannel_raw_models.yml
+
+version: 2
+
+models:
+  - name: stg_customers
+  - name: stg_channels
+  - name: stg_products
+  - name: stg_purchase_history
+  - name: stg_visit_history
