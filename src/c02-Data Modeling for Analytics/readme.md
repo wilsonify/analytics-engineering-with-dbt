@@ -1,7 +1,108 @@
 # Chapter 2: Data Modeling for Analytics
 
+> **🚀 TL;DR:** `make setup` → `make run` → Explore 17 SQL examples demonstrating normalization, dimensional modeling, Data Vault, and dbt layers.
+
+---
+
+## Quick Start Guide
+
+### For Users (Data Analysts/Analytics Engineers)
+
+**Get started in 3 commands:**
+
+```bash
+# 1. Start the services
+make setup
+
+# 2. Run all examples
+make run
+
+# 3. Or explore individual examples
+make list-examples
+make run-example FILE='Example 2-3. books table in 1NF.sql'
+```
+
+**Available services:**
+- PostgreSQL: `localhost:5433` (user: `analytics`, password: `analytics`)
+
+### For Developers
+
+**Project Structure:**
+```
+c02-Data Modeling for Analytics/
+├── docker-compose.yml      # Service definitions
+├── makefile                # Automation commands
+├── .env                    # Environment configuration
+├── init-db/               # Database initialization
+│   └── 01-init.sql        # Sample data setup
+├── dbt-example/           # dbt project
+│   ├── dbt_project.yml
+│   ├── models/
+│   └── profiles.yml
+└── examples/              # 17 fully functional SQL examples
+    ├── README.md          # Example documentation
+    └── *.sql              # Runnable demonstrations
+```
+
+**Development Workflow:**
+```bash
+# Start development environment
+make setup
+
+# Run specific example for testing
+make run-example FILE='Example 2-10. Star schema location dimension.sql'
+
+# Run all examples sequentially
+make run-examples
+
+# View logs
+make logs
+
+# Stop services
+make down
+
+# Clean up completely
+make clean
+```
+
+### For Administrators
+
+**Service Management:**
+
+```bash
+# Start all services (PostgreSQL, dbt)
+docker compose up -d
+
+# Check service health
+docker compose ps
+
+# View service logs
+docker compose logs -f [postgres|dbt]
+
+# Stop services
+docker compose down
+
+# Remove all data and volumes
+docker compose down -v
+```
+
+**Configuration Files:**
+- `.env` - Port and credential configuration
+- `docker-compose.yml` - Container orchestration
+- `init-db/01-init.sql` - Initial database schema and data
+- `profiles.yml` - dbt connection settings
+
+**Ports Used:**
+- `5433`: PostgreSQL database
+
+
+---
+
 ## Table of Contents
 
+- [Quick Start Guide](#quick-start-guide)
+- [Available Commands](#available-commands)
+- [Examples Overview](#examples-overview)
 - [Introduction](#introduction)
 - [Data Modeling Phases](#a-brief-on-data-modeling)
 - [Data Normalization](#the-data-normalization-process)
@@ -11,7 +112,79 @@
 - [Testing and Documentation](#testing-your-data-models)
 - [Debugging and Optimization](#debugging-and-optimizing-data-models)
 - [Medallion Architecture](#medallion-architecture-pattern)
+- [Troubleshooting](#troubleshooting)
 - [Summary](#summary)
+
+---
+
+## Available Commands
+
+### Essential Commands
+
+| Command | Description | Usage |
+|---------|-------------|-------|
+| `make help` | Show all available commands | For quick reference |
+| `make setup` | Start services and wait for health | First-time setup |
+| `make run` | Run SQL and dbt examples | Demo all components |
+
+### Example Management
+
+| Command | Description | Example |
+|---------|-------------|---------|
+| `make list-examples` | List all available SQL examples | See what's available |
+| `make run-examples` | Execute all SQL examples sequentially | Run all demos |
+| `make run-example FILE='...'` | Run a specific example | `make run-example FILE='Example 2-3. books table in 1NF.sql'` |
+
+### Service Management
+
+| Command | Description | When to Use |
+|---------|-------------|-------------|
+| `make up` | Start Docker services | Start containers |
+| `make down` | Stop Docker services | Stop containers |
+| `make clean` | Stop and remove volumes | Reset environment |
+| `make logs` | Follow service logs | Debug issues |
+
+### Component-Specific
+
+| Command | Description | What It Does |
+|---------|-------------|--------------|
+| `make example-sql` | Run SQL examples | Shows books table data |
+| `make example-dbt` | Run dbt model | Creates total_revenue table |
+
+---
+
+## Examples Overview
+
+All **17 SQL examples** are fully functional and can run independently or sequentially:
+
+### Normalization Examples (2-1 to 2-5)
+- **Example 2-1**: Physical data model with complete schema
+- **Example 2-2**: Unnormalized books table
+- **Example 2-3**: First Normal Form (1NF)
+- **Example 2-4**: Second Normal Form (2NF)
+- **Example 2-5**: Third Normal Form (3NF)
+
+### Dimensional Modeling (2-10 to 2-11)
+- **Example 2-10**: Star schema location dimension
+- **Example 2-11**: Snowflake schema with hierarchical dimensions
+
+### Data Vault 2.0 (2-12 to 2-14)
+- **Example 2-12**: Source table for Data Vault
+- **Example 2-13**: Hub table creation
+- **Example 2-14**: Satellite table creation
+
+### dbt Modeling Layers (2-15 to 2-18)
+- **Example 2-15**: Model referencing pattern
+- **Example 2-16**: Staging layer
+- **Example 2-17**: Intermediate layer
+- **Example 2-18**: Mart layer
+
+### Advanced Queries (2-22, 2-24, 2-25)
+- **Example 2-22**: Documented NPS calculation
+- **Example 2-24**: Complex analytical query
+- **Example 2-25**: Query optimization with CTEs
+
+**See [`examples/README.md`](examples/README.md) for detailed descriptions.**
 
 ---
 
@@ -570,6 +743,117 @@ staging      intermediate          marts
 
 ---
 
+## Troubleshooting
+
+### Common Issues and Solutions
+
+#### Services Won't Start
+
+**Problem:** `make setup` fails or containers won't start
+
+**Solutions:**
+```bash
+# Check if ports are already in use
+lsof -i :5433  # PostgreSQL
+
+# Stop conflicting services
+make clean
+
+# Check Docker is running
+docker ps
+
+# View detailed logs
+make logs
+```
+
+#### Database Connection Errors
+
+**Problem:** Can't connect to PostgreSQL
+
+**Check:**
+- Service is healthy: `docker compose ps`
+- Correct port: `5433` (not default 5432)
+- Credentials: user=`analytics`, password=`analytics`, db=`analytics_db`
+
+```bash
+# Test connection manually
+docker compose exec postgres psql -U analytics -d analytics_db -c "SELECT 1;"
+```
+
+#### Examples Fail to Run
+
+**Problem:** SQL examples return errors
+
+**Solutions:**
+```bash
+# Ensure services are running
+make setup
+
+# Run examples in order (some build on others)
+make run-examples
+
+# Check if database is initialized
+docker compose exec postgres psql -U analytics -d analytics_db -c "\dt"
+```
+
+#### dbt Commands Fail
+
+**Problem:** `make example-dbt` returns errors
+
+**Check:**
+```bash
+# Verify dbt container is running
+docker compose ps dbt
+
+# Check dbt configuration
+docker compose exec dbt dbt debug --project-dir /usr/app/dbt --profiles-dir /usr/app
+
+# Rebuild dbt models
+docker compose exec dbt dbt clean --project-dir /usr/app/dbt --profiles-dir /usr/app
+docker compose exec dbt dbt run --project-dir /usr/app/dbt --profiles-dir /usr/app
+```
+
+#### Port Conflicts
+
+**Problem:** Port already in use
+
+**Solution:** Edit `.env` file to use different ports:
+```bash
+# Change from default
+POSTGRES_PORT=5434  # Instead of 5433
+
+# Restart services
+make down
+make setup
+```
+
+#### Container Name Conflicts
+
+**Problem:** Container name already exists (e.g., from Chapter 1)
+
+**Current Setup:** Uses unique container names:
+- `analytics_postgres_c02`
+- `analytics_dbt_c02`
+
+If still conflicts occur:
+```bash
+# Stop all analytics containers
+docker ps -a | grep analytics | awk '{print $1}' | xargs docker stop
+docker ps -a | grep analytics | awk '{print $1}' | xargs docker rm
+
+# Restart this project
+make setup
+```
+
+### Getting Help
+
+1. **Check logs:** `make logs` for service-specific errors
+2. **Verify environment:** `cat .env` to confirm settings
+3. **Test connectivity:** `docker compose exec postgres psql -U analytics -d analytics_db`
+4. **Reset everything:** `make clean && make setup`
+
+---
+
 ## Summary
 
 ### Key Modeling Approaches
@@ -592,11 +876,13 @@ staging      intermediate          marts
 
 1. **Start with business understanding** before modeling
 2. **Choose the right modeling approach** for your use case
-3. **Embrace modularity** with staging -> intermediate -> mart layers
+3. **Embrace modularity** with staging → intermediate → mart layers
 4. **Test and document** throughout the process
 5. **Optimize** with appropriate materialization strategies
 
 ---
+
+## Navigation
 
 *Previous: [Chapter 1 - Analytics Engineering](../c01-Analytics%20Engineering/readme.md)*
 

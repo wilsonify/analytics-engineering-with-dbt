@@ -27,28 +27,6 @@ services:
     entrypoint: ["/bin/sh", "-c"]
     command: ["tail -f /dev/null"]
 
-  airflow-standalone:
-    build: ../i03-AIRFLOW_IMAGE
-    container_name: analytics_airflow_c02
-    env_file: .env
-    ports:
-      - "${AIRFLOW_PORT}:8080"
-    volumes:
-      - ./examples:/opt/airflow/dags
-      - airflow_logs:/opt/airflow/logs
-    depends_on:
-      postgres:
-        condition: service_healthy
-    command: >
-      bash -c "airflow db init &&
-               airflow users create --username ${_AIRFLOW_WWW_USER_USERNAME} --password ${_AIRFLOW_WWW_USER_PASSWORD} --firstname ${AIRFLOW_ADMIN_FIRSTNAME} --lastname ${AIRFLOW_ADMIN_LASTNAME} --role ${AIRFLOW_ADMIN_ROLE} --email ${AIRFLOW_ADMIN_EMAIL} || true &&
-               airflow webserver & airflow scheduler"
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
 
 volumes:
   postgres_data:
-  airflow_logs:

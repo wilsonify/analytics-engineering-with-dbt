@@ -1,4 +1,4 @@
-.PHONY: all run help example-sql example-airflow example-dbt setup up down logs clean run-examples list-examples
+.PHONY: all run help example-sql example-dbt setup up down logs clean run-examples list-examples
 
 all: run
 
@@ -10,7 +10,6 @@ help:
 	@echo "  make list-examples  - List all available SQL examples"
 	@echo "  make run-example FILE='Example 2-1...' - Run a specific example file"
 	@echo "  make example-sql    - Run basic SQL examples"
-	@echo "  make example-airflow - Show Airflow DAG info"
 	@echo "  make example-dbt    - Run dbt model"
 	@echo "  make logs           - Show Docker Compose logs"
 	@echo "  make down           - Stop all services"
@@ -23,7 +22,6 @@ setup: up
 	@echo ""
 	@echo "Access points:"
 	@echo "  - PostgreSQL: localhost:5433 (user: analytics, password: analytics)"
-	@echo "  - Airflow UI: http://localhost:8081 (user: admin, password: admin)"
 	@echo ""
 
 up:
@@ -41,7 +39,7 @@ clean:
 logs:
 	docker compose logs -f
 
-run: example-sql example-dbt example-airflow
+run: example-sql example-dbt
 	@echo ""
 	@echo "✓ All examples completed!"
 
@@ -51,14 +49,6 @@ example-sql:
 	@echo ""
 	@echo "Books table data:"
 	@docker compose exec -T postgres psql -U analytics -d analytics_db -c "SELECT * FROM books LIMIT 4;"
-	@echo ""
-
-example-airflow:
-	@echo "=== Airflow Integration ==="
-	@echo "Airflow is running at http://localhost:8081"
-	@echo "Login: admin / admin"
-	@echo ""
-	@echo "Visit the Airflow UI to see available DAGs"
 	@echo ""
 
 example-dbt:
