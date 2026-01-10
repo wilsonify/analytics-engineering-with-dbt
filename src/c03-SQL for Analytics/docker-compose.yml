@@ -1,0 +1,32 @@
+services:
+  postgres:
+    build: ../i01-POSTGRES_IMAGE
+    container_name: analytics_postgres_c02
+    env_file: .env
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  dbt:
+    build: ../i02-DBT_IMAGE
+    container_name: analytics_dbt_c02
+    env_file: .env
+    volumes:
+      - ./dbt-example:/usr/app/dbt
+      - ./profiles.yml:/usr/app/profiles.yml
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["tail -f /dev/null"]
+
+
+volumes:
+  postgres_data:
