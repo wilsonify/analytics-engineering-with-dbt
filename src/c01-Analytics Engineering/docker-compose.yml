@@ -1,6 +1,6 @@
 services:
   postgres:
-    build: ./i01-POSTGRES_IMAGE
+    build: ../i01-POSTGRES_IMAGE
     container_name: analytics_postgres
     env_file: .env
     ports:
@@ -15,7 +15,7 @@ services:
       retries: 5
 
   dbt:
-    build: ./i02-DBT_IMAGE
+    build: ../i02-DBT_IMAGE
     container_name: analytics_dbt
     env_file: .env
     volumes:
@@ -28,7 +28,7 @@ services:
     command: ["tail -f /dev/null"]
 
   airflow-standalone:
-    build: ./i03-AIRFLOW_IMAGE
+    build: ../i03-AIRFLOW_IMAGE
     container_name: analytics_airflow
     env_file: .env
     ports:
