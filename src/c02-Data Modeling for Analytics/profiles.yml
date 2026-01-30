@@ -4,7 +4,7 @@ dbt_example:
       type: postgres
       host: postgres
       user: analytics
-      password: analytics
+      password: "{{ env_var('DB_PASSWORD') }}"
       port: 5432
       dbname: analytics_db
       schema: public

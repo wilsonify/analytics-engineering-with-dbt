@@ -47,7 +47,7 @@ example-sql:
 	@echo "=== Chapter 2: Data Modeling Examples ==="
 	@echo "Running data modeling SQL examples in PostgreSQL..."
 	@echo "Initializing example data (idempotent)..."
-	@docker compose exec -T postgres psql -U analytics -d analytics_db -f /docker-entrypoint-initdb.d/01-init.sql > /dev/null 2>&1
+	@cat init-db/01-init.sql | docker compose exec -T postgres psql -U analytics -d analytics_db > /dev/null 2>&1
 	@echo ""
 	@echo "Books table data:"
 	@docker compose exec -T postgres psql -U analytics -d analytics_db -c "SELECT * FROM books LIMIT 4;"
@@ -56,7 +56,7 @@ example-sql:
 example-dbt:
 	@echo "=== dbt Model Example ==="
 	@echo "Running dbt model..."
-	@docker compose exec -T dbt dbt run --project-dir /usr/app/dbt --profiles-dir /usr/app
+	@docker compose exec -T -w /usr/app/dbt dbt dbt run --project-dir /usr/app/dbt --profiles-dir /usr/app
 	@echo ""
 	@echo "Verifying results:"
 	@docker compose exec -T postgres psql -U analytics -d analytics_db -c "SELECT * FROM total_revenue;"
