@@ -4,6 +4,6 @@
 select
     orderid as order_id,
     sum(amount) as total_amount
-from {{ source('stripe', 'payment') }}
+from {{ ref('payment') }}
 group by 1
-having total_amount < 0
+having sum(amount) < 0

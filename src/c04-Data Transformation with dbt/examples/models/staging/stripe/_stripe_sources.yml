@@ -1,9 +1,9 @@
-# Sources configuration for Stripe
+# Source configuration for Stripe
+# Note: Source is now defined for reference only (data comes from dbt seeds)
+
 version: 2
 
 sources:
   - name: stripe
-    database: dbt-tutorial
-    schema: stripe
     tables:
       - name: payment

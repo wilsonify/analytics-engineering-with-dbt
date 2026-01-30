@@ -7,4 +7,4 @@ select
     order_date,
     status,
     _etl_loaded_at
-from {{ source('jaffle_shop', 'orders') }}
+from {{ ref('orders') }}

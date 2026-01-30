@@ -1,0 +1,12 @@
+dbt_analytics_engineer_book:
+  outputs:
+    dev:
+      type: postgres
+      host: postgres
+      user: analytics
+      password: "{{ env_var('DB_PASSWORD') }}"
+      port: 5432
+      dbname: analytics_db
+      schema: public
+      threads: 4
+  target: dev
