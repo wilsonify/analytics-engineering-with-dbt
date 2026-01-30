@@ -4,55 +4,26 @@
 # Build args:
 #   py_version: Python version to use (default: 3.11.2)
 #   commit_ref: Git ref/branch to build from (default: main)
-#   git_version: Git version to compile (default: 2.50.1)
 
 ARG py_version=3.11.2
-ARG git_version=2.50.1
-
-# ============================================================================
-# Builder Stage: Compile git from source
-# ============================================================================
-FROM debian:bullseye-slim AS git-builder
-
-ARG git_version
-
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends \
-    build-essential \
-    ca-certificates \
-    curl \
-    libcurl4-gnutls-dev \
-    libexpat1-dev \
-    libssl-dev \
-    make \
-    zlib1g-dev \
-  && curl -fSL https://github.com/git/git/archive/refs/tags/v${git_version}.tar.gz -o git.tar.gz \
-  && tar -xzf git.tar.gz \
-  && cd git-${git_version} \
-  && make prefix=/usr/local NO_TCLTK=1 NO_GETTEXT=1 NO_PERL=1 all \
-  && make prefix=/usr/local NO_TCLTK=1 NO_GETTEXT=1 NO_PERL=1 install \
-  && cd .. \
-  && rm -rf git-${git_version} git.tar.gz \
-  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # ============================================================================
 # Base Stage: Common dependencies and Python setup
 # ============================================================================
 FROM python:${py_version}-slim-bullseye AS base
 
-# Copy pre-compiled git from builder stage
-COPY --from=git-builder /usr/local/bin/git* /usr/local/bin/
-COPY --from=git-builder /usr/local/libexec/git-core /usr/local/libexec/git-core
-
-# Install runtime dependencies only (no build tools)
+# Install all dependencies (build + runtime) for simplicity
+# This is more similar to the original dbt-core Dockerfile approach
 RUN apt-get update \
   && apt-get dist-upgrade -y \
   && apt-get install -y --no-install-recommends \
+    build-essential \
     ca-certificates \
-    libcurl4 \
-    libexpat1 \
-    libpq5 \
+    git \
+    libpq-dev \
+    make \
     openssh-client \
+    software-properties-common \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -61,8 +32,7 @@ ENV PYTHONIOENCODING=utf-8 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     LANG=C.UTF-8 \
-    LC_ALL=C.UTF-8 \
-    GIT_PYTHON_GIT_EXECUTABLE=/usr/local/bin/git
+    LC_ALL=C.UTF-8
 
 # Upgrade pip, setuptools, and wheel
 RUN python -m pip install --upgrade --no-cache-dir \
@@ -90,7 +60,7 @@ RUN python -m pip install --no-cache-dir \
     "dbt-core @ git+https://github.com/dbt-labs/dbt-core@${commit_ref}#subdirectory=core"
 
 # ============================================================================
-# dbt-postgres Stage: Build dbt-postgres from source
+# dbt-postgres Stage: Build dbt-core + dbt-postgres adapter
 # ============================================================================
 FROM base AS dbt-postgres
 
@@ -105,8 +75,10 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 WORKDIR /usr/app/dbt/
 ENTRYPOINT ["dbt"]
 
+# Install both dbt-core and dbt-postgres adapter
 RUN python -m pip install --no-cache-dir \
-    "dbt-postgres @ git+https://github.com/dbt-labs/dbt-core@${commit_ref}#subdirectory=plugins/postgres"
+    "dbt-core @ git+https://github.com/dbt-labs/dbt-core@${commit_ref}#subdirectory=core" \
+    "dbt-postgres @ git+https://github.com/dbt-labs/dbt-postgres@main"
 
 # ============================================================================
 # dbt-all Stage: Includes dbt-core with additional adapters (optional)
