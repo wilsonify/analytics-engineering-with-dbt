@@ -23,7 +23,7 @@ setup: up
 	@docker compose exec -T dbt dbt deps --project-dir /usr/app/dbt
 	@echo ""
 	@echo "Access points:"
-	@echo "  - PostgreSQL: localhost:5435 (user: analytics, password: analytics)"
+	@echo "  - PostgreSQL: localhost:5436 (user: analytics, password: analytics)"
 	@echo ""
 
 up:
@@ -46,15 +46,16 @@ run: run-examples
 	@echo "✓ All examples completed!"
 
 example-dbt:
-	@echo "=== Chapter 4: Data Transformation with dbt ==="
+	@echo "=== Chapter 6: Data Transformation with dbt ==="
 	@echo "Running dbt seeds, models, and tests..."
+	@docker compose exec -T dbt dbt seed --project-dir /usr/app/dbt --profiles-dir /usr/app
 	@docker compose exec -T dbt dbt build --project-dir /usr/app/dbt --profiles-dir /usr/app
 	@echo ""
 
 example-analyses:
 	@echo "=== Analyses ==="
 	@echo "Compiling analyses..."
-	@docker compose exec -T dbt dbt compile --project-dir /usr/app/dbt --profiles-dir /usr/app --select path:analyses
+	@docker compose exec -T dbt dbt compile --project-dir /usr/app/dbt --profiles-dir /usr/app --select resource_type:analysis
 	@echo ""
 
 list-examples:

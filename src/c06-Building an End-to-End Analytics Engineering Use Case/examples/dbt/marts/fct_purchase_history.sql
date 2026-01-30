@@ -19,8 +19,8 @@ SELECT
     fct.mtr_quantity,
     fct.mtr_discount,
     dprod.mtr_unit_price,
-    ROUND(fct.mtr_quantity * dprod.mtr_unit_price, 2) AS mtr_total_amount_gross,
-    ROUND(fct.mtr_quantity * dprod.mtr_unit_price * (1 - fct.mtr_discount), 2) AS mtr_total_amount_net
+    ROUND(CAST(fct.mtr_quantity * dprod.mtr_unit_price AS NUMERIC), 2) AS mtr_total_amount_gross,
+    ROUND(CAST(fct.mtr_quantity * dprod.mtr_unit_price * (1 - fct.mtr_discount) AS NUMERIC), 2) AS mtr_total_amount_net
 FROM stg_fct_purchase_history AS fct
 LEFT JOIN {{ ref("dim_customers")}} AS dcust ON fct.nk_customer_id = dcust.nk_customer_id
 LEFT JOIN {{ ref("dim_channels")}} AS dchan ON fct.nk_channel_id = dchan.nk_channel_id

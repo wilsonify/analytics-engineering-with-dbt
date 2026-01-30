@@ -9,4 +9,4 @@ select
     sum(mtr_unit_price) AS mtr_unit_price
 from {{ ref('fct_purchase_history') }}
 group by 1, 2, 3
-having mtr_unit_price > mtr_total_amount_gross
+having sum(mtr_unit_price) > sum(mtr_total_amount_gross)

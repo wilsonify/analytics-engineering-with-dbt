@@ -1,14 +1,14 @@
-# dbt_project.yml - Core project configuration file for Chapter 5
+# dbt_project.yml - Core project configuration file for Chapter 6
 
-name: 'dbt_advanced_topics'
+name: 'dbt_end_to_end'
 version: '1.0.0'
 config-version: 2
 
 profile: 'dbt_analytics_engineer_book'
 
-model-paths: ["models"]
-analysis-paths: ["analyses"]
-test-paths: ["tests"]
+model-paths: ["dbt/staging", "dbt/marts"]
+analysis-paths: ["analytics"]
+test-paths: ["dbt/tests"]
 seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
@@ -20,5 +20,36 @@ clean-targets:
 
 # Model configurations
 models:
-  dbt_advanced_topics:
-    +materialized: view
+  dbt_end_to_end:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table
+
+# Seed configurations - load raw data
+seeds:
+  dbt_end_to_end:
+    +schema: omnichannel_raw
+    channels:
+      +column_types:
+        channel_id: integer
+        channel_name: varchar
+    products:
+      +column_types:
+        product_sku: integer
+        unit_price: float8
+    customers:
+      +column_types:
+        customer_id: integer
+        date_birth: date
+    purchase_history:
+      +column_types:
+        customer_id: integer
+        product_sku: integer
+        channel_id: integer
+        quantity: integer
+        discount: float8
+    visit_history:
+      +column_types:
+        customer_id: integer
+        channel_id: integer
