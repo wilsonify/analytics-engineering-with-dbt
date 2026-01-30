@@ -1,7 +1,7 @@
 -- Example 5-14: Dynamic Payment Types Macro
 -- Queries database for distinct payment types
 
-{% macro get_payment_types() %}
+{% macro get_payment_types_dynamic() %}
 
     {% set payment_type_query %}
         select distinct payment_type

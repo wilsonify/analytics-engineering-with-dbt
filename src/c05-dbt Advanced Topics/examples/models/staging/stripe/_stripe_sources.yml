@@ -1,0 +1,8 @@
+# Source configuration for Stripe
+
+version: 2
+
+sources:
+  - name: stripe
+    tables:
+      - name: payment

@@ -5,14 +5,13 @@
 
 {{
     config(
-        target_database='analytics',
         target_schema='snapshots',
-        unique_key='order_id',
+        unique_key='id',
         strategy='check',
         check_cols=['status'],
     )
 }}
 
-select * from {{ source('jaffle_shop', 'orders') }}
+select * from {{ ref('orders') }}
 
 {% endsnapshot %}

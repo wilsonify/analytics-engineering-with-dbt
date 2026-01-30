@@ -1,0 +1,6 @@
+id,orderid,paymentmethod,status,amount,created
+1,1,credit_card,success,25.00,2024-01-10 00:00:00
+2,1,gift_card,success,5.00,2024-01-10 00:00:00
+3,2,paypal,success,40.00,2024-01-12 00:00:00
+4,3,stripe,failed,10.00,2024-01-13 00:00:00
+5,3,stripe,success,15.00,2024-01-13 00:00:00

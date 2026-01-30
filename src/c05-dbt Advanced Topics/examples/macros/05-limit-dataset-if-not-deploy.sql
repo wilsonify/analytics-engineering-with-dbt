@@ -4,7 +4,7 @@
 {% macro limit_dataset_if_not_deploy_env(column_name, nbr_months_of_data) %}
     -- Limit data if not in deploy environment
     {% if target.name != 'deploy' %}
-        where {{ column_name }} > DATE_SUB(CURRENT_DATE(), INTERVAL {{ nbr_months_of_data }} MONTH)
+        where {{ column_name }} > CURRENT_DATE - INTERVAL '{{ nbr_months_of_data }} months'
     {% endif %}
 {% endmacro %}
 

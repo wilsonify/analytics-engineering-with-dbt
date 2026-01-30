@@ -1,0 +1,9 @@
+# Source configuration for Jaffle Shop
+
+version: 2
+
+sources:
+  - name: jaffle_shop
+    tables:
+      - name: customers
+      - name: orders

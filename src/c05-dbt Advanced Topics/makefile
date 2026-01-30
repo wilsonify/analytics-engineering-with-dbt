@@ -23,7 +23,7 @@ setup: up
 	@docker compose exec -T dbt dbt deps --project-dir /usr/app/dbt
 	@echo ""
 	@echo "Access points:"
-	@echo "  - PostgreSQL: localhost:5434 (user: analytics, password: analytics)"
+	@echo "  - PostgreSQL: localhost:5435 (user: analytics, password: analytics)"
 	@echo ""
 
 up:
